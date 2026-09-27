@@ -1,114 +1,83 @@
-# RAG - Legal Document Retrieval System
+# StartUpLex: Agentic AI Legal Assistant for Startup Founders
 
-A Retrieval-Augmented Generation (RAG) system designed for legal document processing and querying, utilizing FAISS vector database for efficient document retrieval.
+StartUpLex is a full-stack Agentic AI platform designed to democratize legal accessibility for early-stage startup founders. Moving beyond basic chatbots, it utilizes a multi-tool autonomous reasoning engine to perform complex legal triage, document generation, and contract analysis.
 
-## 📋 Project Overview
+## 🚀 Key Features
 
-This project implements an intelligent RAG pipeline for legal document analysis with advanced query processing capabilities:
+*   ⚖️ **Intelligent Contract Review:** Upload contracts for autonomous red-flag analysis against standard startup terms.
+*   📝 **Automated Document Drafting:** Generate customized NDAs, agreements, and founding documents dynamically.
+*   ✅ **Compliance Checklists:** Generate step-by-step operational and legal checklists (e.g., hiring contractors, incorporating).
+*   🔍 **RAG Search:** Semantic search over local legal databases using FAISS and HuggingFace Embeddings with strict similarity threshold filtering to prevent hallucinations.
+*   🌐 **Live Web Search:** Real-time state filing fees and compliance updates via DuckDuckGo integration.
+*   🔐 **Secure User Authentication:** Full-stack architecture featuring JWT token-based authentication and SQLite for persistent, secure chat history.
+*   💻 **Responsive UI:** Modern HTML5/CSS3/Vanilla JS frontend with real-time Markdown rendering (`marked.js`).
 
-- **Adaptive Query Rewriting**: Automatically expands vague queries into formal legal language
-- **Dynamic Retrieval**: Intelligently determines optimal number of document chunks needed
-- **Similarity Threshold Filtering**: Ensures only relevant context is used for answering
-- **Hallucination Prevention**: Strict prompting ensures answers come only from retrieved documents
-- **Interactive CLI**: Simple command-line interface for querying the knowledge base
+## 🛠️ Tech Stack
+
+*   **Backend:** Python, Flask, SQLite, JWT (JSON Web Tokens)
+*   **Frontend:** HTML5, CSS3, Vanilla JavaScript (ES6+), marked.js
+*   **AI Framework:** LangChain (AgentExecutor, Tool Calling)
+*   **LLM Engine:** Groq API (LLaMA 3 / Open-Source Models)
+*   **Retrieval (RAG):** FAISS Vector Store, HuggingFace Embeddings (`all-MiniLM-L6-v2`)
+*   **Document Processing:** PyMuPDF (PDF chunking and extraction)
 
 ## 🗂️ Project Structure
 
 ```
-RAG/
-├── data/                          # Data directory for raw documents
-├── legal_faiss_db/                # FAISS vector database storage
-│   ├── index.faiss               # FAISS index file
-│   └── index.pkl                 # Serialized metadata
-├── myenv/                         # Python virtual environment
-├── .env                          # Environment variables (API keys, configs)
-├── .gitignore                    # Git ignore rules
-├── data_ingestion.py             # Document loading and processing
-├── query.py                      # Query interface for RAG system
-├── README.md                     # Project documentation
-└── requirements.txt              # Python dependencies
+StartUpLex-main/
+├── app.py                      # Flask backend, API routes, and JWT Auth
+├── db.py                       # SQLite database management for users/chats
+├── rag_service.py              # LangChain Agentic AI, Tool Definitions, LLM routing
+├── index.html                  # Frontend Landing Page
+├── query.html                  # Frontend Chat Interface (Markdown rendered)
+├── requirements.txt            # Python dependencies
+├── .env                        # Environment variables (API keys, configs)
+├── .gitignore                  # Git ignore rules
+└── RAG/
+    ├── data/                   # Directory to drop raw PDFs for bulk ingestion
+    ├── data_ingestion.py       # Script to bulk-ingest PDFs into FAISS
+    └── legal_faiss_db/         # FAISS vector database storage
 ```
 
-## 🚀 Features
+## 📦 Installation & Setup
 
-### Document Processing
-- **PDF Extraction**: Automatic processing of legal PDFs from directory using PyMuPDF
-- **Smart Chunking**: Recursive character-based splitting (250 char chunks, 50 char overlap)
-- **Efficient Indexing**: FAISS vector store with HuggingFace embeddings
+### 1. Prerequisites
+*   Python 3.8+
+*   A free API key from [Groq](https://console.groq.com)
 
-### Query Intelligence
-- **Adaptive Query Rewriting**: Expands short/vague queries (≤4 words) into formal legal language
-- **Dynamic K Selection**: LLM automatically determines optimal retrieval count (1-20 chunks)
-- **Similarity Filtering**: Threshold-based filtering (cutoff: 2.3) to reject irrelevant results
-- **Hallucination Prevention**: Responds with "I don't know" when answer isn't in context
+### 2. Clone & Install
+```bash
+git clone <repository-url>
+cd StartUpLex-main
+pip install -r requirements.txt
+```
 
-### Technical
-- **Zero Temperature LLM**: Deterministic responses for legal accuracy
-- **Groq LLaMA 3.1**: Ultra-fast inference with llama-3.1-8b-instant model
-- **Interactive CLI**: User-friendly command-line query interface
-- **Secure Configuration**: Environment-based API key management
-
-## 📦 Installation
-
-### Prerequisites
-
-- Python 3.8+
-- pip package manager
-
-### Setup Steps
-
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd RAG
-   ```
-
-2. **Create and activate virtual environment**
-   ```bash
-   python -m venv myenv
-   
-   # On Windows
-   myenv\Scripts\activate
-   
-   # On macOS/Linux
-   source myenv/bin/activate
-   ```
-
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Configure environment variables**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your API keys and configurations
-   ```
-
-### Getting API Keys
-
-**Groq API Key** (Required):
-1. Visit [https://console.groq.com](https://console.groq.com)
-2. Sign up for a free account
-3. Navigate to API Keys section
-4. Create a new API key
-5. Add it to your `.env` file as `GROQ_API_KEY`
-
-**HuggingFace Token** (Optional):
-- Only needed if you hit rate limits on embedding models
-- Get it from [https://huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)
-
-## 🔧 Configuration
-
-Create a `.env` file in the root directory with the following variables:
-
+### 3. Configure Environment Variables
+Create or open the `.env` file in the root directory and add your Groq API key:
 ```env
-# API Keys (Required)
-GROQ_API_KEY=your_groq_api_key_here
+# Flask Configuration
+SECRET_KEY=your-secure-secret-key
+FLASK_ENV=production
 
-# Optional: HuggingFace token (only needed if you hit rate limits)
-HUGGINGFACE_API_TOKEN=your_huggingface_token_here
+# API Keys
+GROQ_API_KEY=your_groq_api_key_here
 ```
 
+### 4. Run the Application
+Start the Flask backend server:
+```bash
+python app.py
+```
+*Note: Once the server is running on `http://127.0.0.1:5000`, open your File Explorer and double-click `index.html` to launch the frontend!*
 
-**Note**: This is a RAG system for legal document processing. Ensure compliance with all applicable data privacy and legal regulations when processing sensitive documents.
+## 📚 Bulk Document Ingestion (Optional)
+If you want to manually ingest a large corpus of legal PDFs into your local database rather than using the Web UI upload:
+1. Place all your `.pdf` files inside the `RAG/data/` folder.
+2. Open your terminal in the root folder and run:
+```bash
+python RAG/data_ingestion.py
+```
+This will automatically extract, chunk, embed, and save your documents into the FAISS vector store.
+
+---
+*⚠️ **Legal Disclaimer:** This system is for educational and triage purposes only and does not constitute official legal advice. Always consult with a licensed attorney for specific legal matters.*
